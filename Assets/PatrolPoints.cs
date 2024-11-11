@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PatrolPoints : MonoBehaviour
 {
-  public int wairingTime = 0;
+  public int waitingTime = 0;
   public bool shouldSit;
+    public bool isAngry;
 }

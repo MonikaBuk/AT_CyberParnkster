@@ -5,21 +5,19 @@ using UnityEngine.AI;
 
 public class Patrol : MonoBehaviour
 {
+    public NavMeshAgent agent;
+    public Animator animator;
     public PatrolPoints[] patrolPoints;
-    public float patrolWaitTime = 2f; // Time to wait at each patrol point
 
-    private NavMeshAgent agent;
-    private Animator animator;
-    private int currentPatrolIndex;
-    private bool isMoving;
-
+    private int currentPatrolIndex = 0;
+    private bool isMoving = false;
+    public GameObject storyUI;
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
-        currentPatrolIndex = 0;
-
-        MoveToNextPatrolPoint();
+        storyUI.SetActive(false);
+        MoveToCurrentPatrolPoint();
     }
 
     void Update()
@@ -28,39 +26,48 @@ public class Patrol : MonoBehaviour
         {
             if (!isMoving)
             {
-                StartCoroutine(WaitAndMove());
+                StartCoroutine(WaitAndPerformAction());
             }
         }
-
-        // Update animation based on speed
         float speed = agent.velocity.magnitude;
         isMoving = speed > 0.1f;
         animator.SetBool("IsMoving", isMoving);
     }
 
-    private IEnumerator WaitAndMove()
+    private IEnumerator WaitAndPerformAction()
     {
-
         agent.isStopped = true;
-        Transform targetPoint = patrolPoints[currentPatrolIndex].transform;
-        transform.rotation = targetPoint.rotation;
+        yield return new WaitForSeconds(0.5f);
         bool shouldSit = patrolPoints[currentPatrolIndex].shouldSit;
-        Debug.Log("Should sit at point " + currentPatrolIndex + ": " + shouldSit);
-        animator.SetBool("IsSitting", !shouldSit);
-        yield return new WaitForSeconds(patrolPoints[currentPatrolIndex].wairingTime);
-        animator.SetBool("IsSitting", false);
-        agent.isStopped = false;
+        bool shouldBeAngry = patrolPoints[currentPatrolIndex].isAngry;
+        float waitTime = patrolPoints[currentPatrolIndex].waitingTime;
 
-        MoveToNextPatrolPoint();
+        Debug.Log("Arrived at patrol point " + currentPatrolIndex + ": Sitting - " + shouldSit + ", Angry - " + shouldBeAngry);
+
+        animator.SetBool("IsSitting", shouldSit);
+        animator.SetBool("IsAngry", shouldBeAngry);
+
+        if (shouldBeAngry)
+        {
+            storyUI.SetActive(true);
+        }
+
+        yield return new WaitForSeconds(waitTime);
+
+        animator.SetBool("IsSitting", false);
+        animator.SetBool("IsAngry", false);
+
+        // Move to the next patrol point
+        agent.isStopped = false;
+        IncrementPatrolIndex();
+        MoveToCurrentPatrolPoint();
     }
 
-    void MoveToNextPatrolPoint()
+    void MoveToCurrentPatrolPoint()
     {
         if (patrolPoints.Length == 0) return;
-
         Transform targetPoint = patrolPoints[currentPatrolIndex].transform;
         NavMeshPath path = new NavMeshPath();
-
         if (agent.CalculatePath(targetPoint.position, path) && path.status == NavMeshPathStatus.PathComplete)
         {
             agent.SetDestination(targetPoint.position);
@@ -71,15 +78,16 @@ public class Patrol : MonoBehaviour
             Vector3 randomPoint = GetRandomNavMeshPoint();
             agent.SetDestination(randomPoint);
         }
+    }
 
-        // Update to the next patrol point index
+    void IncrementPatrolIndex()
+    {
         currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoints.Length;
     }
 
     Vector3 GetRandomNavMeshPoint()
     {
-        Vector3 randomPoint = Random.insideUnitSphere * 10;
-        randomPoint += transform.position;
+        Vector3 randomPoint = Random.insideUnitSphere * 10 + transform.position;
 
         NavMeshHit hit;
         if (NavMesh.SamplePosition(randomPoint, out hit, 10.0f, NavMesh.AllAreas))
@@ -87,6 +95,7 @@ public class Patrol : MonoBehaviour
             return hit.position;
         }
 
-        return transform.position;
+        return transform.position; 
     }
 }
+
