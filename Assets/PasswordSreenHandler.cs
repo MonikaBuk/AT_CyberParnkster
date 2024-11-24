@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 public class PasswordSreenHandler : MonoBehaviour
 {
     [SerializeField] TMP_InputField passwordField;
-    private string password = "123CAT";
+    [SerializeField] string password = "123CAT";
     private string inputText;
     [SerializeField] TMP_Text instructions;
     [SerializeField] GameObject passwordScreen;
@@ -15,19 +15,21 @@ public class PasswordSreenHandler : MonoBehaviour
     [SerializeField] GameObject changePasswordScreen;
     [SerializeField] TMP_InputField changePasswordField;
     [SerializeField] PatrolPoints devicePoint;
-
+    [SerializeField] StarterAssets.ThirdPersonController thirdPersonController;
     private void OnEnable()
     {
         passwordField.Select();
         passwordField.ActivateInputField();
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
+        thirdPersonController.MoveSpeed = 0;
     }
 
     private void OnDisable()
     {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+        thirdPersonController.MoveSpeed = 2;
     }
     void Update()
     {

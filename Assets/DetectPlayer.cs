@@ -23,12 +23,15 @@ public class DetectPlayer : MonoBehaviour
 
     private IEnumerator PlayAnimationAndRestart()
     {
-       
+
         animator.SetBool("IsAngry", true);
         navMeshAgent.isStopped = true;
         UI.SetActive(true);
-        yield return new WaitForSeconds(animationDuration);    
-        SceneManager.LoadScene("Password");
-    
+        yield return new WaitForSeconds(animationDuration);
+
+
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+
+
     }
 }

@@ -5,6 +5,8 @@ using UnityEngine.AI;
 
 public class Patrol : MonoBehaviour
 {
+    public AudioClip[] FootstepAudioClips;
+    [Range(0, 1)] public float FootstepAudioVolume = 0.5f;
     public NavMeshAgent agent;
     public Animator animator;
     public PatrolPoints[] patrolPoints;
@@ -29,15 +31,22 @@ public class Patrol : MonoBehaviour
                 StartCoroutine(WaitAndPerformAction());
             }
         }
-        float speed = agent.velocity.magnitude;
-        isMoving = speed > 0.1f;
-        animator.SetBool("IsMoving", isMoving);
+        else
+        {
+            float speed = agent.velocity.magnitude;
+            isMoving = speed > 0.1f;
+            animator.SetBool("IsMoving", isMoving);
+        }
     }
 
     private IEnumerator WaitAndPerformAction()
     {
         agent.isStopped = true;
+        // Set NPC rotation to match the current patrol point's rotation
+        Transform currentPatrolPoint = patrolPoints[currentPatrolIndex].transform;
+        transform.rotation = currentPatrolPoint.rotation;
         yield return new WaitForSeconds(0.5f);
+
         bool shouldSit = patrolPoints[currentPatrolIndex].shouldSit;
         bool shouldBeAngry = patrolPoints[currentPatrolIndex].isAngry;
         float waitTime = patrolPoints[currentPatrolIndex].waitingTime;
@@ -96,6 +105,18 @@ public class Patrol : MonoBehaviour
         }
 
         return transform.position; 
+    }
+
+    private void OnStep(AnimationEvent animationEvent)
+    {
+        if (animationEvent.animatorClipInfo.weight > 0.5f)
+        {
+            if (FootstepAudioClips.Length > 0)
+            {
+                var index = Random.Range(0, FootstepAudioClips.Length);
+                AudioSource.PlayClipAtPoint(FootstepAudioClips[index], transform.position, FootstepAudioVolume);
+            }
+        }
     }
 }
 
