@@ -11,6 +11,13 @@ public class DetectPlayer : MonoBehaviour
     public float animationDuration = 2f;
     public NavMeshAgent navMeshAgent;
     public GameObject UI;
+    public GameObject screenUI;
+    private AudioSource audioMy;
+
+    private void Start()
+    {
+        audioMy = gameObject.GetComponent<AudioSource>();
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -25,7 +32,9 @@ public class DetectPlayer : MonoBehaviour
     {
 
         animator.SetBool("IsAngry", true);
+        audioMy.Play();
         navMeshAgent.isStopped = true;
+        screenUI.SetActive(false);
         UI.SetActive(true);
         yield return new WaitForSeconds(animationDuration);
 

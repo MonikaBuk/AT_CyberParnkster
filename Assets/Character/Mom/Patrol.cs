@@ -6,6 +6,8 @@ using UnityEngine.AI;
 public class Patrol : MonoBehaviour
 {
     public AudioClip[] FootstepAudioClips;
+    public AudioClip AngryNoise;
+    public AudioClip TypingNoise;
     [Range(0, 1)] public float FootstepAudioVolume = 0.5f;
     public NavMeshAgent agent;
     public Animator animator;
@@ -59,6 +61,8 @@ public class Patrol : MonoBehaviour
         if (shouldBeAngry)
         {
             storyUI.SetActive(true);
+            AudioSource.PlayClipAtPoint(AngryNoise, transform.position, FootstepAudioVolume);
+
         }
 
         yield return new WaitForSeconds(waitTime);
@@ -116,6 +120,14 @@ public class Patrol : MonoBehaviour
                 var index = Random.Range(0, FootstepAudioClips.Length);
                 AudioSource.PlayClipAtPoint(FootstepAudioClips[index], transform.position, FootstepAudioVolume);
             }
+        }
+    }
+
+    private void OnTyping(AnimationEvent animationEvent)
+    {
+        if (animationEvent.animatorClipInfo.weight > 0.5f)
+        {
+                AudioSource.PlayClipAtPoint(TypingNoise, transform.position, FootstepAudioVolume);
         }
     }
 }

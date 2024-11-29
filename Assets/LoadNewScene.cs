@@ -7,9 +7,11 @@ public class LoadNewScene : MonoBehaviour
 {
     public string sceneName = "NewScene"; 
     public float delay = 3.0f;
+    public GameObject cameraNew;
 
     private void OnEnable()
     {
+        cameraNew.SetActive(true);
         StartCoroutine(LoadSceneAfterDelay());
     }
 

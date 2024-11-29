@@ -7,7 +7,14 @@ public class ComputerScreenHandler : MonoBehaviour
     
     private bool isPlayerInsideTrigger = false;
     public GameObject computerScreen;
+    public bool canBeDisabled = true ;
+    private AudioSource audioMy;
 
+
+    private void Start()
+    {
+        audioMy = gameObject.GetComponent<AudioSource>();
+    }
     void OnTriggerEnter(Collider other)
     {        if (other.CompareTag("Player"))
         {
@@ -20,7 +27,10 @@ public class ComputerScreenHandler : MonoBehaviour
         // Check if the object exiting the trigger is the player
         if (other.CompareTag("Player"))
         {
-            isPlayerInsideTrigger = false;
+            if (canBeDisabled)
+            {
+                isPlayerInsideTrigger = false;
+            }
         }
     }
 
@@ -35,6 +45,7 @@ public class ComputerScreenHandler : MonoBehaviour
             else
             {
                 computerScreen.SetActive(true);
+                audioMy.Play();
             }
         }
     }
