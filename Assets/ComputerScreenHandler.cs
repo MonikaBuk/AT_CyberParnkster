@@ -14,6 +14,7 @@ public class ComputerScreenHandler : MonoBehaviour
     private void Start()
     {
         audioMy = gameObject.GetComponent<AudioSource>();
+        computerScreen.SetActive(false);
     }
     void OnTriggerEnter(Collider other)
     {        if (other.CompareTag("Player"))

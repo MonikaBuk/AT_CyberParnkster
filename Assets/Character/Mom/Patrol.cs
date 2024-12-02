@@ -12,10 +12,16 @@ public class Patrol : MonoBehaviour
     public NavMeshAgent agent;
     public Animator animator;
     public PatrolPoints[] patrolPoints;
+    private bool isKeyLoged = false;
+
 
     private int currentPatrolIndex = 0;
     private bool isMoving = false;
     public GameObject storyUI;
+
+    [SerializeField] private float TypingAudioVolume = 1.0f;
+    [SerializeField] private AudioClip TypingNoiseNorm;
+    [SerializeField] private AudioClip TypingNoiseHacked;
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -24,6 +30,11 @@ public class Patrol : MonoBehaviour
         MoveToCurrentPatrolPoint();
     }
 
+    public void SetKeyloggerState(bool state)
+    {
+        isKeyLoged = state; // Set the bool to the passed value
+        Debug.Log(isKeyLoged ? "Keylogger is now active!" : "Keylogger is now disabled!");
+    }
     void Update()
     {
         if (!agent.pathPending && agent.remainingDistance < 0.5f && !agent.isStopped)
@@ -125,9 +136,21 @@ public class Patrol : MonoBehaviour
 
     private void OnTyping(AnimationEvent animationEvent)
     {
-        if (animationEvent.animatorClipInfo.weight > 0.5f)
+        if (isKeyLoged)
         {
-                AudioSource.PlayClipAtPoint(TypingNoise, transform.position, FootstepAudioVolume);
+            StartCoroutine(PlayHackedTypingSound(5)); 
+        }
+        else
+        {
+            AudioSource.PlayClipAtPoint(TypingNoiseNorm, transform.position, TypingAudioVolume);
+        }
+    }
+    private IEnumerator PlayHackedTypingSound(int repeatCount)
+    {
+        for (int i = 0; i < repeatCount; i++)
+        {
+            AudioSource.PlayClipAtPoint(TypingNoiseHacked, transform.position, TypingAudioVolume);
+            yield return new WaitForSeconds(TypingNoiseHacked.length);
         }
     }
 }

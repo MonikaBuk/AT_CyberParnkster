@@ -6,9 +6,18 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/StartMenu.unity
+    guid: 0b5c5415a8a973047852b0276f165c22
+  - enabled: 1
     path: Assets/Scenes/Password.unity
     guid: 5d3c6f1aa4a84cd4ea72b1c51a9154ce
   - enabled: 1
     path: Assets/Scenes/Worms.unity
-    guid: 43b108c2649fb464ebe2188b0c94479c
+    guid: c36ee967ada65c54fb00443845c05592
+  - enabled: 1
+    path: Assets/Scenes/Keylogger.unity
+    guid: 69ae08df2ca6cf94893f134e028e158a
+  - enabled: 1
+    path: Assets/Scenes/VictoryScreen.unity
+    guid: 046cca41d5302434c8973c7febd94795
   m_configObjects: {}
