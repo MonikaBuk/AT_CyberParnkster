@@ -17,14 +17,9 @@ public class MenuManager : MonoBehaviour
 
     public void ExitApplication()
     {
-        if (EditorApplication.isPlaying)
-        {
-            EditorApplication.isPlaying = false;
-        }
-        else
-        {
+       
            
             Application.Quit();
-        }
+        
     }
 }
